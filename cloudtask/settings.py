@@ -77,8 +77,12 @@ WSGI_APPLICATION = 'cloudtask.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'dblna4ijqerkva',
+        'USER' : 'fovezzvllniezk',
+        'PASSWORD' : 'e563b8c9968d2ca0f078b7ff15990c398e85005c783cc943724e983d5ddb7b4f',
+        'HOST' : 'ec2-50-19-95-77.compute-1.amazonaws.com',
+        'PORT' : '5432',
     }
 }
 

@@ -3,6 +3,9 @@ from django.contrib.auth import authenticate, logout, login
 from django.shortcuts import redirect
 from django.contrib.auth.models import User
 from django.http import JsonResponse
+from .models import Task
+import subprocess
+
 
 def log(request):
     if request.method == 'POST':
@@ -28,11 +31,15 @@ def sign(request):
 
     return render(request, 'worker/sign.html')
 
+
 def index(request):
     if '_auth_user_id' not in request.session.keys():
         return redirect('/login')
 
-    return render(request, 'worker/index.html')
+    user = User.objects.get(id=request.session['_auth_user_id'])
+    tasks = Task.objects.filter(user=user)
+
+    return render(request, 'worker/index.html', {'tasks': tasks})
 
 
 def out(request):
@@ -40,3 +47,18 @@ def out(request):
     return redirect('/')
 
 
+def add(request):
+    task = Task(name=request.POST['name'], type=request.POST['type'], input_data=request.POST['data'], status=False,
+                user=request.user)
+    task.save()
+
+    tasks_count = len(Task.objects.filter(status=False))
+    if tasks_count >= 5:
+        print('EEEEEEEEEEEE')
+        subprocess.run(["ssh azureuser@157.56.181.117 "], shell=True)
+        # subprocess.run(f'az login -u {SETTINGS.username} -p {SETTINGS.password}', shell=True)
+        subprocess.run("az vm start —resource-group MyResourceGroup —name MyVm1", shell=True)
+        subprocess.run("ssh azureuser@40.76.48.171 python main.py", shell=True)
+        subprocess.run("az vm stop —resource-group MyResourceGroup —name MyVm1", shell=True)
+
+    return redirect('/')
