@@ -53,12 +53,12 @@ def add(request):
     task.save()
 
     tasks_count = len(Task.objects.filter(status=False))
-    if tasks_count >= 5:
-        print('EEEEEEEEEEEE')
-        subprocess.run(["ssh azureuser@157.56.181.117 "], shell=True)
-        # subprocess.run(f'az login -u {SETTINGS.username} -p {SETTINGS.password}', shell=True)
-        subprocess.run("az vm start —resource-group MyResourceGroup —name MyVm1", shell=True)
-        subprocess.run("ssh azureuser@40.76.48.171 python main.py", shell=True)
-        subprocess.run("az vm stop —resource-group MyResourceGroup —name MyVm1", shell=True)
+    # if tasks_count >= 5:
+    #     print('EEEEEEEEEEEE')
+    #     subprocess.run(["ssh azureuser@157.56.181.117 "], shell=True)
+    #     # subprocess.run(f'az login -u {SETTINGS.username} -p {SETTINGS.password}', shell=True)
+    #     subprocess.run("az vm start --resource-group MyResourceGroup --name MyVm1", shell=True)
+    #     subprocess.run("ssh azureuser@40.76.48.171 python main.py", shell=True)
+    #     subprocess.run("az vm stop --resource-group MyResourceGroup --name MyVm1", shell=True)
 
     return redirect('/')
