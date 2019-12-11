@@ -1,64 +1,62 @@
 from django.shortcuts import render
 from django.contrib.auth import authenticate, logout, login
 from django.shortcuts import redirect
-from django.contrib.auth.models import User
-from django.http import JsonResponse
 from .models import Task
 import subprocess
+from rest_framework.decorators import api_view
+from .serializers import TaskSerializer, UserSerializer
+from django.contrib.auth.decorators import login_required
 
 
+@api_view(http_method_names=['GET', 'POST'])
 def log(request):
+    message = ''
     if request.method == 'POST':
         user = authenticate(username=request.POST['user'], password=request.POST['pass'])
-        if user and user.is_active == True:
+        if user:
             login(request, user)
             return redirect('/')
         else:
-            return render(request, 'worker/log.html', {'message': 'Неверный логин или пароль'})
+            message = 'Неверный логин или пароль'
 
-    return render(request, 'worker/log.html')
+    return render(request, 'worker/log.html', {'message': message})
 
-
+@api_view(http_method_names=['GET', 'POST'])
 def sign(request):
     if request.method == 'POST':
-        try:
-            user = User.objects.create_user(username=request.POST['user'], password=request.POST['pass'])
-            user.save()
-        except:
-            pass
+        serializer_params = {
+            'username': request.data['user'],
+            'password': request.data['pass']
+        }
+        user_serializer = UserSerializer(data=serializer_params)
+        if user_serializer.is_valid():
+            user_serializer.create()
+            return redirect('/login')
 
-        return redirect('/')
+    return render(request, 'worker/sign.html', {'message': 'Некорректные данные'})
 
-    return render(request, 'worker/sign.html')
-
-
+@login_required(login_url='/login')
+@api_view(http_method_names=['GET'])
 def index(request):
-    if '_auth_user_id' not in request.session.keys():
-        return redirect('/login')
+    task_serializer = TaskSerializer(Task.objects.filter(user=request.user), many=True)
+    return render(request, 'worker/index.html', {'tasks': task_serializer.data})
 
-    user = User.objects.get(id=request.session['_auth_user_id'])
-    tasks = Task.objects.filter(user=user)
+@login_required(login_url='/login')
+@api_view(http_method_names=['POST'])
+def add(request):
+    serializer_params = {
+        'name': request.data['name'],
+        'type': request.data['type'],
+        'input_data': request.data['data'],
+        'status': False,
+        'user': request.user.id
+    }
+    serializer = TaskSerializer(data=serializer_params)
+    if serializer.is_valid():
+        serializer.save()
 
-    return render(request, 'worker/index.html', {'tasks': tasks})
-
+    return redirect('/')
 
 def out(request):
     logout(request)
-    return redirect('/')
-
-
-def add(request):
-    task = Task(name=request.POST['name'], type=request.POST['type'], input_data=request.POST['data'], status=False,
-                user=request.user)
-    task.save()
-
-    tasks_count = len(Task.objects.filter(status=False))
-    # if tasks_count >= 5:
-    #     print('EEEEEEEEEEEE')
-    #     subprocess.run(["ssh azureuser@157.56.181.117 "], shell=True)
-    #     # subprocess.run(f'az login -u {SETTINGS.username} -p {SETTINGS.password}', shell=True)
-    #     subprocess.run("az vm start --resource-group MyResourceGroup --name MyVm1", shell=True)
-    #     subprocess.run("ssh azureuser@40.76.48.171 python main.py", shell=True)
-    #     subprocess.run("az vm stop --resource-group MyResourceGroup --name MyVm1", shell=True)
-
     return redirect('/')
