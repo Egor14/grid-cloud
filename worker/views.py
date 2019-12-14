@@ -2,7 +2,6 @@ from django.shortcuts import render
 from django.contrib.auth import authenticate, logout, login
 from django.shortcuts import redirect
 from .models import Task
-import subprocess
 from rest_framework.decorators import api_view
 from .serializers import TaskSerializer, UserSerializer
 from django.contrib.auth.decorators import login_required

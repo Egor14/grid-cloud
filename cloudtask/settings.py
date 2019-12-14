@@ -20,7 +20,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'krao$v1!6#-94mzeoyp#1(wu^=o3%#sz$j82ia$n)782bd&67)'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -76,17 +75,6 @@ WSGI_APPLICATION = 'cloudtask.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'dblna4ijqerkva',
-        'USER' : 'fovezzvllniezk',
-        'PASSWORD' : 'e563b8c9968d2ca0f078b7ff15990c398e85005c783cc943724e983d5ddb7b4f',
-        'HOST' : 'ec2-50-19-95-77.compute-1.amazonaws.com',
-        'PORT' : '5432',
-    }
-}
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
@@ -125,3 +113,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+try:
+    from cloudtask.settings_local import *
+except ImportError as exc:
+    __import__('warnings').warn("Can't load local settings: {}".format(str(exc)))
+
