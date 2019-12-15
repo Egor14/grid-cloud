@@ -18,6 +18,6 @@ while True:
             time.sleep(5)
         else:
             os.system(f'az login -u {settings.azure_username} -p {settings.azure_password}')
-            os.system('az vm stop --resource-group MyResourceGroup --name MyVm1')
+            os.system('az vm deallocate --resource-group MyResourceGroup --name MyVm1')
 
     time.sleep(60)
