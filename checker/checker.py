@@ -11,7 +11,7 @@ from worker.models import Task
 import time
 
 while True:
-    if len(Task.objects.filter(status=False)) >= 5:
+    if len(Task.objects.filter(status=False)) >= 3:
         os.system(f'az login -u {settings.azure_username} -p {settings.azure_password}')
         os.system('az vm start --name MyVm1 --resource-group MyResourceGroup')
         while(len(Task.objects.filter(status=False)) > 0):

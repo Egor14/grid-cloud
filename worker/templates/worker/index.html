@@ -8,12 +8,7 @@
 <h1>Главная</h1>
 <a href="/logout/">Выйти</a>
 
-{% for task in tasks %}
-    <p>{{ task.name }} - {{ task.type }} -  - {{ task.status }}</p>
-{% endfor %}
-
-
-<form action="/add/" method="post" style="padding: 20%">
+<form action="/add/" method="post">
     {% csrf_token %}
     <h3>Заполните поля для отправки задания</h3>
   <div class="form-group">
@@ -23,20 +18,36 @@
   </div>
 
     <div class="form-group">
-    <label>Входные данные
-    <input type="text" class="form-control" name="data" required>
+    <label>Ссылка на изображение
+    <input type="text" class="form-control" name="link" required>
         </label>
   </div>
-
-    <div class="form-group">
-    <label>Тип задания
-    <input type="text" class="form-control"  name="type" required>
-        </label>
-  </div>
-
 
   <button type="submit" class="btn btn-primary">Отправить</button>
 </form>
+
+<table style="border-collapse: collapse; width: 1000px;">
+    <tr style="border: 1px solid black;">
+        <td style="border: 1px solid black;">Название</td>
+        <td style="border: 1px solid black;">Ссылка на исходное изображение</td>
+        <td style="border: 1px solid black;">Статус выполнения</td>
+        <td style="border: 1px solid black;">Ссылка на кластеризованное изображение</td>
+    </tr>
+    {% for task in tasks %}
+        <tr style="border: 1px solid black;">
+            <td style="border: 1px solid black;">{{ task.name }}</td>
+            <td style="border: 1px solid black;"><a href="{{ task.link }}">Ссылка</a></td>
+            <td style="border: 1px solid black;">{{ task.status }}</td>
+            {% if task.status %}
+                <td style="border: 1px solid black;"><a href="{{ task.image.url }}">Ссылка</a></td>
+            {% else %}
+                 <td style="border: 1px solid black;">Изображение находится в очереди на кластеризацию</td>
+            {% endif %}
+        </tr>
+    {% endfor %}
+</table>
+
+
 
 </body>
 </html>

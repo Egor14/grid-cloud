@@ -43,16 +43,17 @@ def index(request):
 @login_required(login_url='/login')
 @api_view(http_method_names=['POST'])
 def add(request):
+    print('tit')
     serializer_params = {
         'name': request.data['name'],
-        'type': request.data['type'],
-        'input_data': request.data['data'],
-        'status': False,
+        'link': request.data['link'],
         'user': request.user.id
     }
     serializer = TaskSerializer(data=serializer_params)
     if serializer.is_valid():
         serializer.save()
+    else:
+        print(serializer.errors)
 
     return redirect('/')
 
